@@ -9,7 +9,7 @@
  * drawn but that is not the case. What's really happening is the entire "scene"
  * is being drawn over and over, presenting the illusion of animation.
  *
- * This engine makes the canvas' context (ctx) object globally available to make 
+ * This engine makes the canvas' context (ctx) object globally available to make
  * writing app.js a little simpler to work with.
  */
 
@@ -39,7 +39,7 @@ var Engine = (function(global) {
          * computer is) - hurray time!
          */
         var now = Date.now(),
-            dt = (now - lastTime) / 1000.0;
+        dt = (now - lastTime) / 1000.0;
 
         /* Call our update/render functions, pass along the time delta to
          * our update function since it may be used for smooth animation.
@@ -66,6 +66,7 @@ var Engine = (function(global) {
         reset();
         lastTime = Date.now();
         main();
+        $('#lives').text(player.lives);
     }
 
     /* This function is called by main (our game loop) and itself calls all
@@ -79,7 +80,7 @@ var Engine = (function(global) {
      */
     function update(dt) {
         updateEntities(dt);
-        // checkCollisions();
+        checkCollisions();
     }
 
     /* This is called by the update function and loops through all of the
@@ -93,8 +94,35 @@ var Engine = (function(global) {
         allEnemies.forEach(function(enemy) {
             enemy.update(dt);
         });
+
         player.update();
     }
+
+    function checkCollisions() {
+        allEnemies.forEach(function(enemy) {
+            if (enemy.y === player.y && enemy.x >= 0 && enemy.x <= 505) {
+                if ((player.x >= (enemy.x - 40))
+                &&  (player.x <= (enemy.x + 40))) {
+                    console.log("HIT! - Player x: " + player.x +
+                        " Enemy: " + enemy.x);
+                    player.hitEnemy();
+                    shake();
+                };
+            };
+        });
+    };
+
+    /* This function shakes the canvas after the player being hit by an enemy and
+     * after 500 milliseconds removes the animation in order to permit it to occur
+     * indefinitely
+     */
+    function shake() {
+        $(canvas).css({'animation':'shake 0.5s'});
+        window.setTimeout(function() {
+            $(canvas).css({'animation':'none'});
+        },
+        500);
+    };
 
     /* This function initially draws the "game level", it will then call
      * the renderEntities function. Remember, this function is called every
@@ -117,7 +145,7 @@ var Engine = (function(global) {
             numRows = 6,
             numCols = 5,
             row, col;
-        
+
         // Before drawing, clear existing canvas
         ctx.clearRect(0,0,canvas.width,canvas.height)
 
@@ -162,7 +190,7 @@ var Engine = (function(global) {
      */
     function reset() {
         // noop
-    }
+    };
 
     /* Go ahead and load all of the images we know we're going to need to
      * draw our game level. Then set init as the callback method, so that when
@@ -173,8 +201,20 @@ var Engine = (function(global) {
         'images/water-block.png',
         'images/grass-block.png',
         'images/enemy-bug.png',
-        'images/char-boy.png'
+        'images/char-boy.png',
+        'images/char-cat-girl.png',
+        'images/char-horn-girl.png',
+        'images/char-pink-girl.png',
+        'images/char-princess-girl.png',
+        'images/Gem Blue.png',
+        'images/Gem Green.png',
+        'images/Gem Orange.png',
+        'images/Key.png',
+        'images/Rock.png',
+        'images/Selector.png',
+        'images/Star.png'
     ]);
+
     Resources.onReady(init);
 
     /* Assign the canvas' context object to the global variable (the window
