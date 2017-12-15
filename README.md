@@ -7,10 +7,10 @@ To run the game simply open the file **index.html** in the main folder you have 
 # Commands
         
 You can move your char by using the keyboard keys:
-    * ![Arrow Up Key](images/arrow-up-icon.png):  Move up.
-    * ![Arrow Down Key](images/arrow-down-icon.png):  Move down.
-    * ![Arrow Left Key](images/arrow-left-icon.png):  Move left.
-    * ![Arrow Right Key](images/arrow-uo-icon.png):  Move right.
+* ![Arrow Up Key](images/arrow-up-icon.png):  Move up.
+* ![Arrow Down Key](images/arrow-down-icon.png):  Move down.
+* ![Arrow Left Key](images/arrow-left-icon.png):  Move left.
+* ![Arrow Right Key](images/arrow-right-icon.png):  Move right.
     
 - - -
     
