@@ -1,6 +1,24 @@
-frontend-nanodegree-arcade-game
-===============================
+# Getting Started
 
-Students should use this [rubric](https://review.udacity.com/#!/projects/2696458597/rubric) for self-checking their submission. Make sure the functions you write are **object-oriented** - either class functions (like Player and Enemy) or class prototype functions such as Enemy.prototype.checkCollisions, and that the keyword 'this' is used appropriately within your class and class prototype functions to refer to the object the function is called upon. Also be sure that the **readme.md** file is updated with your instructions on both how to 1. Run and 2. Play your arcade game.
+To run the game simply open the file **index.html** in the main folder you have downloaded 
+        
+- - -
+        
+# Commands
+        
+You can move your char by using the keyboard keys:
+    * ![Arrow Up Key](images/arrow-up-icon.png):  Move up.
+    * ![Arrow Down Key](images/arrow-down-icon.png):  Move down.
+    * ![Arrow Left Key](images/arrow-left-icon.png):  Move left.
+    * ![Arrow Right Key](images/arrow-uo-icon.png):  Move right.
+    
+- - -
+    
+# Rules
+    
+Once you start the game, your main goal is to cross all the way up to the river avoiding being hit by the enemies (bugs) moving non stop.
+Every time you cross all the way successfully you earn 100 points.
+You also have 3 hit points. Every time you got hit by enemies you will lose 1 hit point. Reaching 0 hit points will be game over for you.
 
-For detailed instructions on how to get started, check out this [guide](https://docs.google.com/document/d/1v01aScPjSWCCWQLIpFqvg3-vXLH2e8_SZQKC8jNO0Dc/pub?embedded=true).
+**Hurry Up and remember avoiding your foes!!**
+ 
