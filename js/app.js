@@ -1,7 +1,9 @@
+// Return random number, min andmax included
 function getRandomArbitrary(min, max) {
   return Math.random() * (max - min) + min;
 };
 
+var difficultSpeed = 1;
 
 var keyFrames = function() {
 
@@ -32,7 +34,7 @@ Enemy.prototype.update = function(dt) {
 
     if (this.x < 550) {
 
-        this.x = this.x + (this.speed * dt);
+        this.x = this.x + (this.speed * dt * difficultSpeed);
     } else {
         this.reset();
     };
@@ -51,7 +53,7 @@ var Player = function (x, y) {
     this.y = y;
     this.lives = 3;
     this.score = 0;
-    this.sprite = 'images/char-boy.png'
+    this.sprite = 'images/char-boy.png';
 };
 
 Player.prototype.render = function() {
@@ -69,18 +71,23 @@ Player.prototype.hitEnemy = function() {
         this.lives--;
         $('#lives').text(this.lives);
 
+        //Verify rocks on the path
+        allRocks.forEach(function(rock) {
+            while (player.y === rock.y && player.x === rock.x) {
+                player.x += 101;
+            };
+        });
+
         if(this.lives === 0) {
             formatGameOver();
         };
 };
 
-Player.prototype.addScore = function(score) {
-    this.score += score;
+Player.prototype.addScore = function() {
+    this.score += 100 * difficultSpeed;
     $('#score').text(this.score);
 
-    if (this.score % 1000 === 0) {
-        nextLevel();
-    }
+    nextLevel();
 };
 
 Player.prototype.handleInput = function(pressedKey) {
@@ -88,30 +95,62 @@ Player.prototype.handleInput = function(pressedKey) {
         gameOver();
     };
 
+    var allowedMove = true;
+
     switch(pressedKey) {
         case("left"):
-            if (this.x >= 101) {
+
+            //Verifiy rocks on path
+            allRocks.forEach(function(rock) {
+                if (rock.y === player.y && rock.x === (player.x - 101)) {
+                    allowedMove = false;
+                };
+            });
+
+            if (this.x >= 101 && allowedMove) {
                 this.x -= 101;
             };
             break;
 
         case ("right"):
-            if (this.x <= 303) {
+
+            //Verifiy rocks on path
+            allRocks.forEach(function(rock) {
+                if (rock.y === player.y && rock.x === (player.x + 101)) {
+                    allowedMove = false;
+                };
+            });
+
+            if (this.x <= 303 && allowedMove) {
                 this.x += 101;
             };
             break;
 
         case ("up"):
-            if (this.y <= 380 && this.y > 48) {
+            //Verifiy rocks on path
+            allRocks.forEach(function(rock) {
+                if (rock.x === player.x && rock.y === (player.y - 83)) {
+                    allowedMove = false;
+                };
+            });
+
+            if ((this.y <= 380 && this.y > 48) && allowedMove) {
                 this.y -= 83;
-            } else if (this.y = 48) {
-                this.addScore(100);
+            } else if (this.y === 48) {
+                this.addScore();
                 this.y = 380;
             };
             break;
 
         case("down"):
-            if (this.y < 380) {
+            //Verifiy rocks on path
+            allRocks.forEach(function(rock) {
+                if (rock.x === player.x && rock.y === (player.y + 83)) {
+                    allowedMove = false;
+                };
+            });
+
+            if (this.y < 380 && allowedMove) {
                 this.y += 83;
             };
             break;
@@ -121,7 +160,53 @@ Player.prototype.handleInput = function(pressedKey) {
 
 // Makes the game more difficult
 function nextLevel() {
+        difficultSpeed += 0.2;
+        addRock();
+};
 
+var Game = function() {
+        this.difficultLevel = 1;
+        this.rocks = 0;
+        this.maxRocks = 4;
+};
+
+var Rock = function(x, y) {
+        this.x = x;
+        this.y = y;
+        this.sprite = 'images/Rock.png';
+};
+
+Rock.prototype.render = function() {
+        ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
+};
+
+function addRock() {
+        var randomNumber = parseInt(getRandomArbitrary(0, 1).toFixed(0));
+
+        if (game.rocks < game.maxRocks && randomNumber === 1) {
+            genRockPositions();
+
+            console.log('Rock X: ' + randomRockX + ' / Y: ' + randomRockY);
+
+            // Gurantee that a new rock won't appear at the same player's spot
+            while(randomRockX === player.x
+               && randomRockY === (player.y + (380 - 48))) {
+                genRockPositions();
+            };
+
+            var rock = new Rock(randomRockX, randomRockY);
+
+            allRocks.push(rock);
+            game.rocks++;
+        };
+};
+
+var randomRockX = 0;
+var randomRockY = 0;
+
+function genRockPositions() {
+        randomRockX = Math.floor(Math.random() * 5) * 101;
+        randomRockY = ((Math.floor(Math.random() * 5) + 1) * 83) - 35;
 };
 
 function formatGameOver() {
@@ -141,20 +226,10 @@ function gameOver() {
     300);
 };
 
-var Rock = function(y) {
-    this.x = Math.floor((Math.random()*5))*101;
-    this.y = y;
-    this.sprite = 'images/Rock.png';
-};
-
-Rock.prototype.render = function() {
-     ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
-
-};
-
 // Now instantiate your objects.
 // Place all enemy objects in an array called allEnemies
 // Place the player object in a variable called player
+var game = new Game();
 
 var en1 = new Enemy(48); //48
 var en2 = new Enemy(131); //131
@@ -163,6 +238,7 @@ var en3 = new Enemy(214); //214
 var player = new Player(0, 380);
 
 var allEnemies = [en1, en2, en3];
+var allRocks = [];
 
 allEnemies.forEach(function(enemy, i) {
     enemy.reset();
