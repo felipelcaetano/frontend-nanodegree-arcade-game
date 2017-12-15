@@ -17,7 +17,7 @@ You can move your char by using the keyboard keys:
 # Rules
     
 Once you start the game, your main goal is to cross all the way up to the river avoiding being hit by the enemies (bugs) moving non stop.
-Every time you cross all the way successfully you earn 100 points.
+Every time you cross all the way successfully you earn points and a rock can drop randomly at any space in the stage blocking yur way. Moreover, the enemies' speed will also increase gradually as you advance in the game.
 You also have 3 hit points. Every time you got hit by enemies you will lose 1 hit point. Reaching 0 hit points will be game over for you.
 
 **Hurry Up and remember avoiding your foes!!**
