@@ -45,12 +45,22 @@ Enemy.prototype.render = function() {
     ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
 };
 
+Enemy.prototype.getX = function() {
+    return this.x;
+};
+
+Enemy.prototype.getY = function() {
+    return this.y;
+};
+
 // Now write your own player class
 // This class requires an update(), render() and
 // a handleInput() method.
 var Player = function (x, y) {
     this.x = x;
     this.y = y;
+    this.prevX = 0;
+    this.prevY = 0;
     this.lives = 3;
     this.score = 0;
     this.sprite = 'images/char-boy.png';
@@ -64,23 +74,36 @@ Player.prototype.update = function(){
 
 };
 
+Player.prototype.getX = function() {
+    return this.x;
+};
+
+Player.prototype.getY = function() {
+    return this.y;
+};
+
 // Initial values var player = new Player(0, 380, 3)
 Player.prototype.hitEnemy = function() {
-        this.x = 0;
-        this.y = 380;
-        this.lives--;
-        $('#lives').text(this.lives);
+    this.x = 0;
+    this.y = 380;
+    this.lives--;
+    $('#lives').text(this.lives);
 
-        //Verify rocks on the path
-        allRocks.forEach(function(rock) {
-            while (player.y === rock.y && player.x === rock.x) {
-                player.x += 101;
-            };
-        });
+    if(this.lives === 0) {
+        formatGameOver();
+    };
+};
 
-        if(this.lives === 0) {
-            formatGameOver();
-        };
+Player.prototype.hitRock = function() {
+    if (prevPressedKey === 'left'
+    ||  prevPressedKey === 'right') {
+        this.x = this.prevX;
+    };
+
+    if (prevPressedKey === 'up'
+    ||  prevPressedKey ==='down') {
+        this.y = this.prevY;
+    };
 };
 
 Player.prototype.addScore = function() {
@@ -90,51 +113,40 @@ Player.prototype.addScore = function() {
     nextLevel();
 };
 
+var prevPressedKey;
+
 Player.prototype.handleInput = function(pressedKey) {
     if(this.lives === 0) {
         gameOver();
     };
 
-    var allowedMove = true;
-
     switch(pressedKey) {
         case("left"):
 
-            //Verifiy rocks on path
-            allRocks.forEach(function(rock) {
-                if (rock.y === player.y && rock.x === (player.x - 101)) {
-                    allowedMove = false;
-                };
-            });
+            prevPressedKey = 'left';
 
-            if (this.x >= 101 && allowedMove) {
+            if (this.x >= 101) {
+                this.prevX = this.x;
                 this.x -= 101;
             };
             break;
 
         case ("right"):
 
-            //Verifiy rocks on path
-            allRocks.forEach(function(rock) {
-                if (rock.y === player.y && rock.x === (player.x + 101)) {
-                    allowedMove = false;
-                };
-            });
+            prevPressedKey = 'right';
 
-            if (this.x <= 303 && allowedMove) {
+            if (this.x <= 303) {
+                this.prevX = this.x
                 this.x += 101;
             };
             break;
 
         case ("up"):
-            //Verifiy rocks on path
-            allRocks.forEach(function(rock) {
-                if (rock.x === player.x && rock.y === (player.y - 83)) {
-                    allowedMove = false;
-                };
-            });
 
-            if ((this.y <= 380 && this.y > 48) && allowedMove) {
+            prevPressedKey = 'up';
+
+            if (this.y <= 380 && this.y > 48) {
+                this.prevY = this.y;
                 this.y -= 83;
             } else if (this.y === 48) {
                 this.addScore();
@@ -143,14 +155,11 @@ Player.prototype.handleInput = function(pressedKey) {
             break;
 
         case("down"):
-            //Verifiy rocks on path
-            allRocks.forEach(function(rock) {
-                if (rock.x === player.x && rock.y === (player.y + 83)) {
-                    allowedMove = false;
-                };
-            });
 
-            if (this.y < 380 && allowedMove) {
+            prevPressedKey = 'down';
+
+            if (this.y < 380) {
+                this.prevY = this.y;
                 this.y += 83;
             };
             break;
@@ -178,6 +187,14 @@ var Rock = function(x, y) {
 
 Rock.prototype.render = function() {
         ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
+};
+
+Rock.prototype.getX = function() {
+    return this.x;
+};
+
+Rock.prototype.getY = function() {
+    return this.y;
 };
 
 function addRock() {

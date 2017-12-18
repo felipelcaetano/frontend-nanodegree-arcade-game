@@ -99,15 +99,56 @@ var Engine = (function(global) {
     }
 
     function checkCollisions() {
-        allEnemies.forEach(function(enemy) {
-            if (enemy.y === player.y && enemy.x >= 0 && enemy.x <= 505) {
-                if ((player.x >= (enemy.x - 40))
-                &&  (player.x <= (enemy.x + 40))) {
-                    console.log("HIT! - Player x: " + player.x +
-                        " Enemy: " + enemy.x);
-                    player.hitEnemy();
-                    shake();
+
+        var playerX = player.getX();
+        var playerY = player.getY();
+        var hitRock = false;
+
+        /*
+         * Verify if the player has hit any rock
+        */
+        allRocks.forEach(function(rock) {
+
+            var rockX = rock.getX();
+            var rockY = rock.getY();
+
+            if (rockX === playerX
+            &&  rockY === playerY) {
+                player.hitRock();
+                shake(30);
+                hitRock = true;
+            };
+        });
+
+        /*
+         * Verify if the player has hit any enemy
+        */
+        if (hitRock === false) {
+            allEnemies.forEach(function(enemy) {
+                var enemyX = enemy.getX();
+                var enemyY = enemy.getY();
+
+                if (enemyY === playerY && enemyX >= 0 && enemyX <= 505) {
+                    if ((playerX >= (enemyX - 40))
+                    &&  (playerX <= (enemyX + 40))) {
+                        console.log("HIT! - Player x: " + playerX +
+                            " Enemy: " + enemyX);
+                        player.hitEnemy();
+                        shake(500);
+                        checkRocks(playerX, playerY);
+                    };
                 };
+            });
+        };
+    };
+
+    function checkRocks(playerX, playerY) {
+        allRocks.forEach(function(rock) {
+            var rockX = rock.getX();
+            var rockY = rock.getY();
+
+            while (playerY === rockY && playerX === rockX) {
+                playerX += 101;
             };
         });
     };
@@ -116,12 +157,13 @@ var Engine = (function(global) {
      * after 500 milliseconds removes the animation in order to permit it to occur
      * indefinitely
      */
-    function shake() {
+    function shake(duration) {
         $(canvas).css({'animation':'shake 0.5s'});
+
         window.setTimeout(function() {
             $(canvas).css({'animation':'none'});
         },
-        500);
+        duration);
     };
 
     /* This function initially draws the "game level", it will then call
